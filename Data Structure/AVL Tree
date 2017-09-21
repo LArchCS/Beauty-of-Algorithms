@@ -1,0 +1,263 @@
+# -*- coding: utf-8 -*-
+
+# 在 AVL_2nd 基础上 加好了自平衡
+# 貌似没什么 bug
+
+
+class Node(object):
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+        self.parent = None
+        self.balanceFactor = 0
+        self.height = 0
+        self.rightWeight = 0
+        
+    def findSuccessor(self):
+        succ = None
+        if self.right:  # 如果节点有右子节点，那么后继节点是右子树中最小的关键节点
+            succ = self.right
+            while succ.left != None:
+                succ = succ.left
+        return succ
+        
+    def __repr__(self):
+        #return "n" + str(self.val)
+        return "(n" + str(self.val) + ", " + str(self.height) + ", " + str(self.balanceFactor)  + ", " + str(self.rightWeight) + ")"
+
+
+class AVLTree(object):
+    def __init__(self):
+        self.root = None
+        
+    def __repr__(self):
+        def printNode(root):
+            if not root:
+                print None
+                return
+            print root, root.left, root.right
+            if root.left != None:
+                printNode(root.left)
+            if root.right != None:
+                printNode(root.right)
+        node = self.root
+        printNode(node)
+        return ""
+    
+    def height(self,node):
+        if node is None:
+            return -1
+        else:
+            return node.height
+    
+    def search(self, val):
+        curt = self.root
+        if curt == None:
+            return None
+        while curt != None:
+            if curt.val > val:
+                curt = curt.left
+            elif curt.val < val:
+                curt = curt.right
+            else:
+                return curt
+        return None
+        
+    def insert(self, val):
+        z = Node(val)
+        v = None
+        w = self.root
+        while w != None:
+            v = w
+            if z.val < w.val:
+                w = w.left
+            else:
+                w = w.right
+        z.parent = v
+        if v == None:
+            self.root = z
+        else:
+            if z.val < v.val:
+                v.left = z
+            else:
+                v.right = z
+        z.height = 0
+        self.updateBF(z.parent)
+        self.updateRW()
+    
+    def delete(self, val):  # z is a node in tree
+        z = self.search(val)
+        if not z:
+            return
+        if z.left == None or z.right == None:
+            y = z
+        else:  # z have two children
+            y = z.findSuccessor()
+        if y.left != None:
+            x = y.left
+        else:
+            x = y.right
+        if x != None:
+            x.parent = y.parent
+        if y.parent == None:
+            self.root = x
+        else:
+            if y == y.parent.left:
+                y.parent.left = x
+            else:
+                y.parent.right = x
+        if y != z:
+            z.val = y.val
+        if x is not None:
+            self.updateBF(x)
+        else:
+            self.updateBF(y.parent)
+        self.updateRW()
+        
+        
+    def L_Rotation(self, v):
+        y = v.right
+        if not y:
+            return
+        v.right = y.left
+        if y.left != None:
+            y.left.parent = v
+        y.parent = v.parent
+        if v.parent == None:
+            self.root = y
+        elif v == v.parent.left:
+            v.parent.left = y
+        else:
+            v.parent.right = y
+        y.left = v
+        v.parent = y
+        # update height and BF
+        #v.height=max(self.height(v.right), self.height(v.left)) + 1
+        #y.height=max(self.height(y.right), v.height) + 1
+        self.updateBF(v)
+        
+    def R_Rotation(self, v):
+        y = v.left
+        if not y:
+            return
+        v.left = y.right
+        if y.right != None:
+            y.right.parent = v
+        y.parent = v.parent
+        if v.parent == None:
+            self.root = y
+        elif v == v.parent.right:
+            v.parent.right = y
+        else:
+            v.parent.left = y
+        y.right = v
+        v.parent = y
+        # update height and BF
+        #v.height=max(self.height(v.right), self.height(v.left)) + 1
+        #y.height=max(self.height(y.left), v.height) + 1
+        self.updateBF(v)
+    
+    def LR_Rotation(self, node):  # left heavy
+        v = node
+        v_left = node.left
+        self.L_Rotation(v_left)
+        self.R_Rotation(v)
+
+    def RL_Rotation(self, node):  # right heavy
+        v = node
+        v_right = node.right
+        self.R_Rotation(v_right)
+        self.L_Rotation(v)
+    
+    def rotate(self, v):
+        if v.balanceFactor < 0:  # tree right heavy
+            if v.right.balanceFactor > 0:  # tree left heavy
+                self.RL_Rotation(v)
+            else:
+                self.L_Rotation(v)
+        elif v.balanceFactor > 0:  # tree left heavy
+            if v.left.balanceFactor < 0:  # tree right heavy
+                self.LR_Rotation(v)
+            else:
+                self.R_Rotation(v)
+
+    # update height and BF    
+    def updateBF(self, node):
+        if node is None:
+            return
+        oldBF = node.balanceFactor
+        left = -1
+        right = -1
+        if node.left != None:
+            left = node.left.height
+        if node.right != None:
+            right = node.right.height
+        node.height = max(left, right) + 1
+        node.balanceFactor = left - right
+        if node.balanceFactor != oldBF:
+            self.updateBF(node.parent)
+        if abs(node.balanceFactor) == 2:
+            self.rotate(node)
+            
+    # update right weight
+    def updateRW(self):
+        def helper(root):
+            if not root:
+                return 0
+            root.rightWeight = helper(root.right)
+            return root.rightWeight + 1 + helper(root.left)
+        helper(self.root)
+    
+    def treeString(self):
+        def helper(node):
+            if node == None:
+                return ""
+            return "(" + str(helper(node.left)) + str(node.val) + str(helper(node.right)) + ")"
+        return helper(self.root)
+
+    def rank(self, val):
+        def helper(node, val):
+            if not node:
+                return 0
+            if val == node.val:
+                return node.rightWeight + 1
+            elif val > node.val:
+                return helper(node.right, val)
+            else:
+                return helper(node.left, val) + node.rightWeight + 1
+        return helper(self.root, val)
+
+
+
+# TEST
+
+tree = AVLTree()
+tree.insert(4)
+tree.insert(5)
+tree.insert(2)
+tree.insert(1)
+tree.insert(3)
+tree.insert(2.5)
+tree.insert(3.5)
+tree.insert(5.5)
+tree.insert(6)
+print tree
+print tree.treeString()
+
+print tree.rank(2)
+
+tree.delete(3)
+print tree.treeString()
+'''
+tree.delete(5)
+tree.delete(4)
+tree.delete(3.5)
+tree.delete(2)
+tree.delete(2.5)
+tree.delete(3)
+tree.delete(1)
+
+print tree
+print tree.treeString()
+'''
