@@ -3,50 +3,49 @@ import random
 # The palyer who comes up with a random number for guesser, and tells result for each guess from guesser.
 class Teller():
     def __init__(self, number):
-        self.secretNumber = str(number)
-        self.guesses = 0
-        self.guess = ""
+        self.secretNumber = number
+        self.numGuesses = 0
 
     # Returns a result based on comparing guess with secret number.
-    def tellResult(self, value):
-        self.guesses += 1
-        res = "You got the answer {} with {} gusses".format(self.secretNumber, self.guesses)
-        if self.guess != self.secretNumber:
-            self.guess = str(value)
-            if self.guess == "exit":
-                res = "Exit"
-            elif not isValidNumber(self.guess):
-                res = "Please enter a valid number"
+    def tellResult(self, guess):
+        self.numGuesses += 1
+        res = ""
+        if guess == "exit":
+            res = "Exit"
+        elif not isValidNumber(guess):
+            res = "Please enter a valid number"
+        else:
+            A, B = checkResult(guess, self.secretNumber)
+            if A == 4:
+                res = "You got the answer {} with {} guesses".format(self.secretNumber, self.numGuesses)
             else:
-                A, B = checkResult(self.guess, self.secretNumber)
-                if A != 4:
-                    res = "{}A{}B".format(A, B)
+                res = "{}A{}B".format(A, B)
         print(" Teller: {}".format(res))
         return res
 
 # The player who guesses the number from teller.
 class Guesser():
     def __init__(self):
-        self.candidates = list(range(1023, 9877))
-        self.guessed = {}
-    
+        self.candidates = [str(num) for num in range(1023, 9877)]
+        self.guessResults = {}
+
     # Returns a guess based on guesses alread made.
     def makeGuess(self):
         guess = "exit"
         while len(self.candidates) > 0 and not (isValidNumber(guess) and self.isValidGuess(guess)):
-            guess = str(self.candidates.pop())
+            guess = self.candidates.pop()
         print("Guesser: {}".format(guess))
         return guess
-    
+
     # Registers a guess with a result.
     def registerGuessResult(self, guess, result):
-        self.guessed[guess] = result
-    
+        self.guessResults[guess] = result
+
     def isValidGuess(self, value):
-        for guess in self.guessed:
+        for guess in self.guessResults:
             try:
-                A = int(self.guessed[guess][0])
-                B = int(self.guessed[guess][2])
+                A = int(self.guessResults[guess][0])
+                B = int(self.guessResults[guess][2])
                 a, b = checkResult(value, guess)
                 if a != A or b != B:
                     return False
@@ -60,7 +59,6 @@ def isValidNumber(number):
         int(number)
     except ValueError:
         return False
-    number = str(number)
     if len(number) != 4:
         return False
     if number[0] == '0':
@@ -81,9 +79,9 @@ def checkResult(guess, number):
             A += 1
         elif guess[i] in number:
             B += 1
-    return (A, B)
+    return A, B
 
-# Replaces guesser or teller with this method if you want to play against computer.
+# Replaces guesser with this method if you want to play against teller.
 def readInput():
     return str(input("Please enter a valid number: "))
 
