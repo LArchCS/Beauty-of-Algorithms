@@ -44,9 +44,9 @@ class Guesser():
     def isValidGuess(self, value):
         for guess in self.guessResults:
             try:
-                A = int(self.guessResults[guess][0])
-                B = int(self.guessResults[guess][2])
-                a, b = checkResult(value, guess)
+                a = int(self.guessResults[guess][0])
+                b = int(self.guessResults[guess][2])
+                A, B = checkResult(value, guess)
                 if a != A or b != B:
                     return False
             except:
