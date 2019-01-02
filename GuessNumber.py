@@ -20,7 +20,6 @@ class Teller():
                 res = "You got the answer {} with {} guesses".format(self.secretNumber, self.numGuesses)
             else:
                 res = "{}A{}B".format(A, B)
-        print(" Teller: {}".format(res))
         return res
 
 # The player who guesses the number from teller.
@@ -34,7 +33,6 @@ class Guesser():
         guess = "exit"
         while len(self.candidates) > 0 and not (isValidNumber(guess) and self.isValidGuess(guess)):
             guess = self.candidates.pop()
-        print("Guesser: {}".format(guess))
         return guess
 
     # Registers a guess with a result.
@@ -96,6 +94,9 @@ def __main__():
 
     while guess != secretNumber and guess != "exit":
         guess = guesser.makeGuess()
-        guesser.registerGuessResult(guess, teller.tellResult(guess))
+        print("Guesser: {}".format(guess))
+        result = teller.tellResult(guess)
+        print(" Teller: {}".format(result))
+        guesser.registerGuessResult(guess, result)
 
 __main__()
