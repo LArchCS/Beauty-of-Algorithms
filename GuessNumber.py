@@ -96,7 +96,6 @@ def __main__():
         guess = guesser.makeGuess()
         result = teller.tellResult(guess)
         guesser.registerGuessResult(guess, result)
-        print("Guesser: {}".format(guess))
-        print(" Teller: {}".format(result))
+        print("Guesser: {}\n Teller: {}".format(guess, result))
 
 __main__()
