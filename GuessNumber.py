@@ -99,3 +99,16 @@ def __main__():
         print("Guesser: {}\n Teller: {}".format(guess, result))
 
 __main__()
+
+'''
+Guesser: 1023
+ Teller: 1A0B
+Guesser: 1456
+ Teller: 0A1B
+Guesser: 4078
+ Teller: 0A2B
+Guesser: 5783
+ Teller: 3A0B
+Guesser: 6783
+ Teller: You got the answer 6783 with 5 guesses
+'''
