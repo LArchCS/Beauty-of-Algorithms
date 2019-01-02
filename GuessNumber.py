@@ -9,18 +9,14 @@ class Teller():
     # Returns a result based on comparing guess with secret number.
     def tellResult(self, guess):
         self.numGuesses += 1
-        res = ""
         if guess == "exit":
-            res = "Exit"
-        elif not isValidNumber(guess):
-            res = "Please enter a valid number"
-        else:
-            A, B = checkResult(guess, self.secretNumber)
-            if A == len(self.secretNumber):
-                res = "You got the answer {} with {} guesses".format(self.secretNumber, self.numGuesses)
-            else:
-                res = "{}A{}B".format(A, B)
-        return res
+            return "Exit"
+        if not isValidNumber(guess):
+            return "Please enter a valid number"
+        A, B = checkResult(guess, self.secretNumber)
+        if A == len(self.secretNumber):
+            return "You got the answer {} with {} guesses".format(self.secretNumber, self.numGuesses)
+        return "{}A{}B".format(A, B)
 
 # The player who guesses the number from teller.
 class Guesser():
