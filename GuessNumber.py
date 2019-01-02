@@ -16,7 +16,7 @@ class Teller():
             res = "Please enter a valid number"
         else:
             A, B = checkResult(guess, self.secretNumber)
-            if A == 4:
+            if A == len(self.secretNumber):
                 res = "You got the answer {} with {} guesses".format(self.secretNumber, self.numGuesses)
             else:
                 res = "{}A{}B".format(A, B)
