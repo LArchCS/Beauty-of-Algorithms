@@ -26,7 +26,7 @@ class Teller():
 # The player who guesses the number from teller.
 class Guesser():
     def __init__(self):
-        self.candidates = [str(num) for num in range(1023, 9877)][::-1]
+        self.candidates = [str(num) for num in range(9876, 1022, -1)]
         self.guessResults = {}
 
     # Returns a guess based on guesses alread made.
