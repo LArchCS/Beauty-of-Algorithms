@@ -94,9 +94,9 @@ def __main__():
 
     while guess != secretNumber and guess != "exit":
         guess = guesser.makeGuess()
-        print("Guesser: {}".format(guess))
         result = teller.tellResult(guess)
-        print(" Teller: {}".format(result))
         guesser.registerGuessResult(guess, result)
+        print("Guesser: {}".format(guess))
+        print(" Teller: {}".format(result))
 
 __main__()
