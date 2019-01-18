@@ -49,7 +49,7 @@ class Guesser():
 
 class Utils():
     # Returns a random 4 digit number, without duplicated digits.
-    def generateRandomNumber():
+    def generateSecretNumber():
         secretNumber = str(random.randint(1023, 9877))
         while not Utils.isValidNumber(secretNumber):
             secretNumber = str(random.randint(1023, 9877))
@@ -88,7 +88,7 @@ class Utils():
         return str(input("Please enter a valid number: "))
 
 def __main__():
-    secretNumber = Utils.generateRandomNumber()
+    secretNumber = Utils.generateSecretNumber()
     guess = ""
 
     teller = Teller(secretNumber)
