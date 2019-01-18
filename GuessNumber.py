@@ -11,9 +11,9 @@ class Teller():
         self.numGuesses += 1
         if guess == "exit":
             return "Exit"
-        if not isValidNumber(guess):
+        if not Utils.isValidNumber(guess):
             return "Please enter a valid number"
-        A, B = checkResult(guess, self.secretNumber)
+        A, B = Utils.checkResult(guess, self.secretNumber)
         if A == len(self.secretNumber):
             return "You got the answer {} with {} guesses".format(self.secretNumber, self.numGuesses)
         return "{}A{}B".format(A, B)
@@ -27,7 +27,7 @@ class Guesser():
     # Returns a guess based on guesses alread made.
     def makeGuess(self):
         guess = "exit"
-        while len(self.candidates) > 0 and not (isValidNumber(guess) and self.isValidGuess(guess)):
+        while len(self.candidates) > 0 and not (Utils.isValidNumber(guess) and self.isValidGuess(guess)):
             guess = self.candidates.pop()
         return guess
 
@@ -40,48 +40,49 @@ class Guesser():
             try:
                 a = int(self.guessResults[guess][0])
                 b = int(self.guessResults[guess][2])
-                A, B = checkResult(value, guess)
+                A, B = Utils.checkResult(value, guess)
                 if a != A or b != B:
                     return False
             except:
                 continue
         return True
 
-# Returns true if input number starts with non zero integer, has no dupicates, and has 4 digits.
-def isValidNumber(number):
-    try:
-        int(number)
-    except ValueError:
-        return False
-    if len(number) != 4:
-        return False
-    if number[0] == '0':
-        return False
-    seen = set()
-    for n in number:
-        if n in seen:
+class Utils():
+    # Returns true if input number starts with non zero integer, has no dupicates, and has 4 digits.
+    def isValidNumber(number):
+        try:
+            int(number)
+        except ValueError:
             return False
-        seen.add(n)
-    return True
+        if len(number) != 4:
+            return False
+        if number[0] == '0':
+            return False
+        seen = set()
+        for n in number:
+            if n in seen:
+                return False
+            seen.add(n)
+        return True
+    
+    # Returns the comparison result of guess and number in the format of (A, B).
+    def checkResult(guess, number):
+        A = 0
+        B = 0
+        for i in range(4):
+            if guess[i] == number[i]:
+                A += 1
+            elif guess[i] in number:
+                B += 1
+        return A, B
 
-# Returns the comparison result of guess and number in the format of (A, B).
-def checkResult(guess, number):
-    A = 0
-    B = 0
-    for i in range(4):
-        if guess[i] == number[i]:
-            A += 1
-        elif guess[i] in number:
-            B += 1
-    return A, B
-
-# Replaces guesser with this method if you want to play against teller.
-def readInput():
-    return str(input("Please enter a valid number: "))
+    # Replaces guesser with this method if you want to play against teller.
+    def readInput():
+        return str(input("Please enter a valid number: "))
 
 def __main__():
     secretNumber = str(random.randint(1023, 9877))
-    while not isValidNumber(secretNumber):
+    while not Utils.isValidNumber(secretNumber):
         secretNumber = str(random.randint(1023, 9877))
     guess = ""
 
