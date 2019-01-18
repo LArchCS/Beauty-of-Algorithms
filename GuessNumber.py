@@ -48,6 +48,13 @@ class Guesser():
         return True
 
 class Utils():
+    # Returns a random 4 digit number, without duplicated digits.
+    def generateRandomNumber():
+        secretNumber = str(random.randint(1023, 9877))
+        while not Utils.isValidNumber(secretNumber):
+            secretNumber = str(random.randint(1023, 9877))
+        return secretNumber
+
     # Returns true if input number starts with non zero integer, has no dupicates, and has 4 digits.
     def isValidNumber(number):
         try:
@@ -81,9 +88,7 @@ class Utils():
         return str(input("Please enter a valid number: "))
 
 def __main__():
-    secretNumber = str(random.randint(1023, 9877))
-    while not Utils.isValidNumber(secretNumber):
-        secretNumber = str(random.randint(1023, 9877))
+    secretNumber = Utils.generateRandomNumber()
     guess = ""
 
     teller = Teller(secretNumber)
